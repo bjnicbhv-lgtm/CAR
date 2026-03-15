@@ -13,22 +13,24 @@ jobs:
 
     steps:
     - name: Check out the repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # עודכן לגרסה 4
       with:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # עודכן לגרסה 5
       with:
-        python-version: '3.x'
+        python-version: '3.11' # גרסה יציבה יותר עבור PyInstaller
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller
 
-    - name: List files for debug
-      run: ls -R  # שלב זה יעזור לנו לוודא שהקבצים אכן נמצאים בתיקיית השורש
+    - name: Verify files existence
+      run: |
+        echo "Current Directory Content:"
+        ls -la
 
     - name: Get the next version
       id: tag_version
@@ -44,7 +46,16 @@ jobs:
 
     - name: Build with PyInstaller
       run: |
-        python -m PyInstaller --name "app-release" --onefile --windowed --icon="my_icon.ico" --add-data "icon_copy.ico:." --add-data "icon_delete.ico:." --add-data "icon_search.ico:." --add-data "my_icon.ico:." car_search_app.py
+        python -m PyInstaller \
+          --name "app-release" \
+          --onefile \
+          --windowed \
+          --icon="my_icon.ico" \
+          --add-data "icon_copy.ico:." \
+          --add-data "icon_delete.ico:." \
+          --add-data "icon_search.ico:." \
+          --add-data "my_icon.ico:." \
+          ./car_search_app.py
 
     - name: Create a new tag
       run: |
